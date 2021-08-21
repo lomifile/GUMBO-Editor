@@ -5,7 +5,7 @@ char* C_HL_keywords[] = {
 	(char*)"switch", (char*)"if", (char*)"while", (char*)"for", (char*)"break", (char*)"continue", (char*)"return", (char*)"else",
 	(char*)"struct", (char*)"union", (char*)"typedef", (char*)"static", (char*)"enum", (char*)"class", (char*)"case",
 	(char*)"int|", (char*)"long|", (char*)"double|", (char*)"float|", (char*)"char|", (char*)"unsigned|", (char*)"signed|",
-	(char*)"void|", NULL
+	(char*)"void|" ,(char*)"#include", NULL
 };
 
 struct EditorSyntax HLDB[] = {
@@ -56,26 +56,27 @@ char* File::editor_rows_to_string(int* buflen)
 {
 	int totlen = 0;
 	int j;
-	for (j = 0; j < RawMode::GET::get_numrows(); j++)
-		totlen += RawMode::GET::get_erow_size(j) + 1;
+	for (j = 0; j < e.num_rows; j++)
+		totlen += e.row[j].size + 1;
 	*buflen = totlen;
-	char* buf = (char*)malloc(totlen);
-	char* p = buf;
-	for (j = 0; j < RawMode::GET::get_numrows(); j++)
-	{
-		memcpy(p, RawMode::GET::get_erow_chars(j), RawMode::GET::get_erow_size(j));
-		p += RawMode::GET::get_erow_size(j);
+
+	char *buf = (char*)malloc(totlen);
+	char *p = buf;
+	for (j = 0; j < e.num_rows; j++) {
+		memcpy(p, e.row[j].chars, e.row[j].size);
+		p += e.row[j].size;
 		*p = '\n';
 		p++;
 	}
+
 	return buf;
 }
 
 void File::editor_open(char* filename)
 {
 	FILE* fp;
-	RawMode::free_filename();
-	RawMode::SET::set_filename(filename);
+	free(e.filename);
+	e.filename = strdup(filename);
 
 	Syntax::editor_select_syntax_highlight();
 
@@ -98,7 +99,7 @@ void File::editor_open(char* filename)
 	}
 	free(line);
 	fclose(fp);
-	RawMode::SET::set_dirty(0);
+	e.dirty = 0;
 }
 
 void File::editor_find_callback(char* query, int key)

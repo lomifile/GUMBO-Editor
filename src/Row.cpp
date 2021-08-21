@@ -61,23 +61,26 @@ void Row::update_row(erow* row)
 void Row::editor_insert_row(int at, char* s, size_t len)
 {
 	if (at < 0 || at > e.num_rows) return;
-	e.row = (erow*)realloc(e.row, sizeof(erow) * (e.num_rows + 1));
+
+	e.row = (erow *)realloc(e.row, sizeof(erow) * (e.num_rows + 1));
 	memmove(&e.row[at + 1], &e.row[at], sizeof(erow) * (e.num_rows - at));
 	for (int j = at + 1; j <= e.num_rows; j++) e.row[j].idx++;
+
 	e.row[at].idx = at;
 
-	RawMode::SET::set_erow();
+	e.row[at].size = len;
+	e.row[at].chars = (char*)malloc(len + 1);
+	memcpy(e.row[at].chars, s, len);
+	e.row[at].chars[len] = '\0';
 
-	RawMode::SET::set_erow_size(len, at);
-	RawMode::SET::set_erow_chars(len, s, at);
-	RawMode::SET::set_last_erow_char(len, at);
-	RawMode::SET::set_rsize_pos(at, 0);
-	RawMode::SET::set_render_pos(at, NULL);
+	e.row[at].rsize = 0;
+	e.row[at].render = NULL;
 	e.row[at].hl = NULL;
 	e.row[at].hl_open_comment = 0;
-	update_row(RawMode::GET::get_erow_pos(at));
-	RawMode::SET::set_num_rows(RawMode::GET::get_numrows() + 1);
-	RawMode::SET::set_dirty(RawMode::GET::get_dirty() + 1);
+	update_row(&e.row[at]);
+
+	e.num_rows++;
+	e.dirty++;
 }
 
 void Row::editor_row_delete_cahr(erow* row, int at)
@@ -86,7 +89,7 @@ void Row::editor_row_delete_cahr(erow* row, int at)
 	memmove(&row->chars[at], &row->chars[at + 1], row->size - at);
 	row->size--;
 	update_row(row);
-	RawMode::SET::set_dirty(RawMode::GET::get_dirty() + 1);
+	e.dirty++;
 }
 
 void Row::free_row(erow* row)

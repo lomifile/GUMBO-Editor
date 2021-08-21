@@ -84,7 +84,7 @@ void IO::editor_process_keypress()
 		editor_insert_new_line();
 		break;
 	case CTRL_KEY('q'):
-		if (RawMode::GET::get_dirty() && quit_times > 0)
+		if (e.dirty && quit_times > 0)
 		{
 			RawMode::editor_set_status_message("WARNING!!! File has unsaved changes. "
 											   "Press Ctrl-Q %d more times to quit.", quit_times);
@@ -101,11 +101,11 @@ void IO::editor_process_keypress()
 		break;
 
 	case (int)EditorKey::HOME_KEY:
-		RawMode::SET::set_x(0);
+		e.cx = 0;
 		break;
 	case (int)EditorKey::END_KEY:
-		if (RawMode::GET::get_Y() < RawMode::GET::get_numrows())
-			RawMode::SET::set_x(RawMode::GET::get_erow_size(RawMode::GET::get_Y()));
+		if (e.cy < e.num_rows)
+			e.cx = e.row[e.cy].size;
 
 	case (int)EditorKey::BACKSPACE:
 	case CTRL_KEY('h'):
@@ -117,17 +117,14 @@ void IO::editor_process_keypress()
 	case (int)EditorKey::PAGE_UP:
 	case (int)EditorKey::PAGE_DOWN:
 	{
-		if (c == (int)EditorKey::PAGE_UP)
-		{
-			RawMode::SET::set_y(RawMode::GET::get_rowoff());
-		}
-		else if (c == (int)EditorKey::PAGE_DOWN)
-		{
-			RawMode::SET::set_y(RawMode::GET::get_rowoff() + (RawMode::get_screen_rows() - 1));
-			if (RawMode::GET::get_Y() > RawMode::GET::get_numrows()) RawMode::SET::set_y(RawMode::GET::get_numrows());
+		if (c == (int)EditorKey::PAGE_UP) {
+			e.cy = e.rowoff;
+		} else if (c == (int)EditorKey::PAGE_DOWN) {
+			e.cy = e.rowoff + e.screenrows - 1;
+			if (e.cy > e.num_rows) e.cy = e.num_rows;
 		}
 
-		int times = RawMode::get_screen_rows();
+		int times = e.screenrows;
 		while (times--)
 			Window::move_cursor(c == (int)EditorKey::PAGE_UP ? (int)EditorKey::ARROW_UP : (int)EditorKey::ARROW_DOWN);
 		break;
@@ -172,8 +169,8 @@ void IO::editor_refresh_screen()
 	snprintf(buffer,
 		sizeof(buffer),
 		"\x1b[%d;%dH",
-		(RawMode::GET::get_Y() - RawMode::GET::get_rowoff()) + 1,
-		(RawMode::GET::get_rx() - RawMode::GET::get_coloff()) + 1);
+		(e.cy - e.rowoff) + 1,
+		(e.rx - e.coloff) + 1);
 	append(&inputBuffer, buffer, (int)strlen(buffer));
 
 	append(&inputBuffer, "\x1b[?25h", 6);
@@ -187,9 +184,9 @@ void IO::editor_draw_rows(struct InputBuffer* inputBuffer)
 	int y;
 	for (y = 0; y < e.screenrows; y++)
 	{
-		char num[5];
-		int numlen = snprintf(num, sizeof(num), "%d  ", y);
-		append(inputBuffer, num, numlen);
+//		char num[5];
+//		int numlen = snprintf(num, sizeof(num), "%d  ", y);
+//		append(inputBuffer, num, numlen);
 		int filerow = y + e.rowoff;
 		if (filerow >= e.num_rows)
 		{
@@ -283,24 +280,22 @@ void IO::free_input_buffer(struct InputBuffer* inputBuffer)
 
 void IO::editor_scroll()
 {
-	RawMode::SET::set_rx(RawMode::GET::get_X());
-	if (RawMode::GET::get_Y() < RawMode::GET::get_rowoff())
-	{
-		RawMode::SET::set_rx(Row::editor_row_cx_to_rx(RawMode::GET::get_erow_pos(RawMode::GET::get_Y()),
-			RawMode::GET::get_X()));
-	}
-	if (RawMode::GET::get_Y() >= (RawMode::GET::get_rowoff() + RawMode::get_screen_rows()))
-	{
-		RawMode::SET::set_rowoff((RawMode::GET::get_Y() - RawMode::get_screen_rows()) + 1);
+	e.rx = 0;
+	if (e.cy < e.num_rows) {
+		e.rx = Row::editor_row_cx_to_rx(&e.row[e.cy], e.cx);
 	}
 
-	if (RawMode::GET::get_rx() < RawMode::GET::get_coloff())
-	{
-		RawMode::SET::set_coloff(RawMode::GET::get_rx());
+	if (e.cy < e.rowoff) {
+		e.rowoff = e.cy;
 	}
-	if (RawMode::GET::get_rx() >= (RawMode::GET::get_coloff() + RawMode::get_screen_cols()))
-	{
-		RawMode::SET::set_coloff((RawMode::GET::get_rx() - RawMode::get_screen_cols()) + 1);
+	if (e.cy >= e.rowoff + e.screenrows) {
+		e.rowoff = e.cy - e.screenrows + 1;
+	}
+	if (e.rx < e.coloff) {
+		e.coloff = e.rx;
+	}
+	if (e.rx >= e.coloff + e.screencols) {
+		e.coloff = e.rx - e.screencols + 1;
 	}
 }
 
@@ -309,15 +304,15 @@ void IO::editor_draw_status_bar(struct InputBuffer* inputBuffer)
 	append(inputBuffer, "\x1b[7m", 4);
 	char status[80], rstatus[80];
 	int len = snprintf(status, sizeof(status), "%.20s - %d lines %s",
-		RawMode::GET::get_filename() ? RawMode::GET::get_filename() : "[No Name]", RawMode::GET::get_numrows(),
-		RawMode::GET::get_dirty() ? "(modified)" : "");
+		e.filename ? e.filename : "[No Name]", e.num_rows,
+		e.dirty ? "(modified)" : "");
 	int rlen = snprintf(rstatus, sizeof(rstatus), "%s | %d/%d",
 		e.syntax ? e.syntax->filetype : "no ft", e.cy + 1, e.num_rows);
-	if (len > RawMode::get_screen_cols()) len = RawMode::get_screen_cols();
+	if (len > e.screencols) len = e.screencols;
 	append(inputBuffer, status, len);
-	while (len < RawMode::get_screen_cols())
+	while (len < e.screencols)
 	{
-		if (RawMode::get_screen_cols() - len == rlen)
+		if (e.screencols - len == rlen)
 		{
 			append(inputBuffer, rstatus, rlen);
 			break;
@@ -335,31 +330,31 @@ void IO::editor_draw_status_bar(struct InputBuffer* inputBuffer)
 void IO::draw_message_bar(struct InputBuffer* inputBuffer)
 {
 	append(inputBuffer, "\x1b[K", 3);
-	int msglen = strlen(RawMode::GET::get_statusmsg());
-	if (msglen > RawMode::get_screen_cols()) msglen = RawMode::get_screen_cols();
-	if (msglen && time(NULL) - RawMode::GET::get_time() < 5)
-		append(inputBuffer, RawMode::GET::get_statusmsg(), msglen);
+	int msglen = strlen(e.statusmsg);
+	if (msglen > e.screencols) msglen = e.screencols;
+	if (msglen && time(NULL) - e.statusmsg_time < 5)
+		append(inputBuffer, e.statusmsg, msglen);
 }
 
 void IO::editor_insert_char(int c)
 {
-	if (RawMode::GET::get_Y() == RawMode::GET::get_numrows())
+	if (e.cy == e.num_rows)
 	{
 		Row::editor_insert_row(e.num_rows, (char*)"", 0);
 	}
-	Row::editor_row_insert_char(RawMode::GET::get_erow_pos(RawMode::GET::get_Y()), RawMode::GET::get_X(), c);
-	RawMode::SET::set_x(RawMode::GET::get_X() + 1);
+	Row::editor_row_insert_char(&e.row[e.cy], e.cx, c);
+	e.cx++;
 }
 
 void IO::editor_delete_char()
 {
-	if (RawMode::GET::get_Y() == RawMode::GET::get_numrows()) return;
+	if (e.cy == e.num_rows) return;
 
-	erow* row = RawMode::GET::get_erow_pos(RawMode::GET::get_Y());
-	if (RawMode::GET::get_X() > 0)
+	erow* row = &e.row[e.cy];
+	if (e.cx > 0)
 	{
-		Row::editor_row_delete_cahr(row, (RawMode::GET::get_X() - 1));
-		RawMode::SET::set_x(RawMode::GET::get_X() - 1);
+		Row::editor_row_delete_cahr(row, (e.cx-1));
+		e.cx--;
 	}
 }
 

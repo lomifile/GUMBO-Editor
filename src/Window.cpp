@@ -35,47 +35,41 @@ int Window::get_window_size(int* rows, int* cols)
 
 void Window::move_cursor(int key)
 {
-	erow* row = (RawMode::GET::get_Y() >= RawMode::GET::get_numrows()) ? NULL
-																	   : RawMode::GET::get_erow_pos(RawMode::GET::get_Y());
+	erow* row = (e.cy >= e.num_rows) ? NULL : &e.row[e.cy];
 
 	switch (key)
 	{
 	case (int)EditorKey::ARROW_LEFT:
-		if (RawMode::GET::get_X() != 0)
-		{
-			RawMode::SET::set_x(RawMode::GET::get_X() - 1);
-		} else if(RawMode::GET::get_Y() > 0) {
-			RawMode::SET::set_y(RawMode::GET::get_Y() - 1);
-			RawMode::SET::set_x(RawMode::GET::get_erow_size(RawMode::GET::get_Y()));
+		if (e.cx != 0) {
+			e.cx--;
+		} else if (e.cy > 0) {
+			e.cy--;
+			e.cx = e.row[e.cy].size;
 		}
 		break;
 	case (int)EditorKey::ARROW_RIGHT:
-		if (row && RawMode::GET::get_X() < row->size)
-		{
-			RawMode::SET::set_x(RawMode::GET::get_X() + 1);
-		} else if(row && RawMode::GET::get_X() == row->size) {
-			RawMode::SET::set_y(RawMode::GET::get_Y() + 1);
-			RawMode::SET::set_x(0);
+		if (row && e.cx < row->size) {
+			e.cx++;
+		} else if (row && e.cx == row->size) {
+			e.cy++;
+			e.cx = 0;
 		}
 		break;
 	case (int)EditorKey::ARROW_UP:
-		if (RawMode::GET::get_Y() != 0)
-		{
-			RawMode::SET::set_y(RawMode::GET::get_Y() - 1);
+		if (e.cy != 0) {
+			e.cy--;
 		}
 		break;
 	case (int)EditorKey::ARROW_DOWN:
-		if (RawMode::GET::get_Y() < RawMode::GET::get_numrows())
-		{
-			RawMode::SET::set_y(RawMode::GET::get_Y() + 1);
+		if (e.cy < e.num_rows) {
+			e.cy++;
 		}
 		break;
 	}
 
-	row = (RawMode::GET::get_Y() >= RawMode::GET::get_numrows()) ? NULL
-																 : RawMode::GET::get_erow_pos(RawMode::GET::get_Y());
-	int rowlen = row ? row->size :0;
-	if(RawMode::GET::get_X() > rowlen) {
-		RawMode::SET::set_x(rowlen);
+	row = (e.cy >= e.num_rows) ? NULL : &e.row[e.cy];
+	int rowlen = row ? row->size : 0;
+	if (e.cx > rowlen) {
+		e.cx = rowlen;
 	}
 }

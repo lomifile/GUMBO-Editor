@@ -12,6 +12,8 @@
 #include "RawMode.h"
 #include "IO.h"
 
+extern EditorConfig e;
+
 namespace Window
 {
 	int get_window_size(int* rows, int* cols);
