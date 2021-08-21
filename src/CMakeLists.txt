@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.16)
+project(src VERSION 1)
+set(CMAKE_CXX_STANDARD 14)
+message("-- CMAKE_PROJECT_VERSION = ${CMAKE_PROJECT_VERSION}")
+add_executable(Editor main.cpp RawMode.cpp Error.cpp IO.cpp Window.cpp Window.h RawMode.h Error.h IO.h File.cpp File.h Row.cpp Row.h)
+include_directories(${CMAKE_SOURCE_DIR})
+set(CMAKE_BUILD_TYPE Debug)
