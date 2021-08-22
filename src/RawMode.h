@@ -49,10 +49,7 @@ namespace RawMode
 	void init();
 	void enable();
 	void disable();
-
 	void editor_set_status_message(const char* fmt, ...);
-
-	int get_screen_rows();
 };
 
 #endif //EDITOR_SRC_RAWMODE_H

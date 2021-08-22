@@ -1,6 +1,6 @@
 #include "IO.h"
 
-int line_num = 0;
+int line_nums = 0;
 
 int IO::editor_read_key()
 {
@@ -96,6 +96,17 @@ void IO::editor_process_keypress()
 		exit(0);
 		break;
 
+	case CTRL_KEY('n'):
+		switch (line_nums)
+		{
+		case 1:
+			line_nums = 0;
+			break;
+		case 0:
+			line_nums = 1;
+			break;
+		}
+
 	case CTRL_KEY('s'):
 		File::save();
 		break;
@@ -169,11 +180,22 @@ void IO::editor_refresh_screen()
 	draw_message_bar(&inputBuffer);
 
 	char buffer[32];
-	snprintf(buffer,
-		sizeof(buffer),
-		"\x1b[%d;%dH",
-		(e.cy - e.rowoff) + 1,
-		(e.rx - e.coloff) + 6);
+	if (line_nums == 1)
+	{
+		snprintf(buffer,
+			sizeof(buffer),
+			"\x1b[%d;%dH",
+			(e.cy - e.rowoff) + 1,
+			(e.rx - e.coloff) + 6);
+	}
+	else if (line_nums == 0)
+	{
+		snprintf(buffer,
+			sizeof(buffer),
+			"\x1b[%d;%dH",
+			(e.cy - e.rowoff) + 1,
+			(e.rx - e.coloff) + 1);
+	}
 	append(&inputBuffer, buffer, (int)strlen(buffer));
 
 	append(&inputBuffer, "\x1b[?25h", 6);
@@ -189,26 +211,12 @@ void IO::line_numbers(struct InputBuffer* inputBuffer, int line)
 	if (line < 10)
 	{
 		int numlen = snprintf(num, sizeof(num), "%d    ", line);
-//		if (numlen > e.screencols) numlen = e.screencols;
 		append(inputBuffer, num, numlen);
-//		int padding = (e.screencols - numlen) / 32;
-//		if (padding)
-//		{
-//			padding--;
-//		}
-//		while (padding--) append(inputBuffer, " ", 1);
 	}
 	else if (line >= 10)
 	{
 		int numlen = snprintf(num, sizeof(num), "%d   ", line);
-//		if (numlen > e.screencols) numlen = e.screencols;
 		append(inputBuffer, num, numlen);
-//		int padding = (e.screencols - numlen) / 32;
-//		if (padding)
-//		{
-//			padding--;
-//		}
-//		while (padding--) append(inputBuffer, " ", 1);
 	}
 	else if (line >= 100)
 	{
@@ -230,7 +238,7 @@ void IO::editor_draw_rows(struct InputBuffer* inputBuffer)
 	for (y = 0; y < e.screenrows; y++)
 	{
 		int filerow = y + e.rowoff;
-		line_numbers(inputBuffer, filerow + 1);
+		if (line_nums == 1) line_numbers(inputBuffer, filerow + 1);
 		if (filerow >= e.num_rows)
 		{
 			if (e.num_rows == 0 && y == e.screenrows / 3)
@@ -351,7 +359,7 @@ void IO::editor_scroll()
 void IO::editor_draw_status_bar(struct InputBuffer* inputBuffer)
 {
 	append(inputBuffer, "\x1b[7m", 4);
-	char status[80], rstatus[80];
+	char status[80], rstatus[80], lines[80];
 	int len = snprintf(status, sizeof(status), "%.20s - %d lines %s",
 		e.filename ? e.filename : "[No Name]", e.num_rows,
 		e.dirty ? "(modified)" : "");
@@ -404,6 +412,15 @@ void IO::editor_delete_char()
 	{
 		Row::editor_row_delete_cahr(row, (e.cx - 1));
 		e.cx--;
+	}
+	else if (e.cy != 0)
+	{
+		if (e.cx == 0)
+		{
+			Row::delete_row(e.cy);
+		}
+		e.cy--;
+		Window::move_cursor((int)EditorKey::ARROW_RIGHT);
 	}
 }
 

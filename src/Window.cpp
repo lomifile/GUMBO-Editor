@@ -49,7 +49,7 @@ void Window::move_cursor(int key)
 		break;
 	case (int)EditorKey::ARROW_RIGHT:
 		if (row && e.cx < row->size) {
-			e.cx++;
+			e.cx = e.row[e.cy].size;
 		} else if (row && e.cx == row->size) {
 			e.cy++;
 			e.cx = 0;
