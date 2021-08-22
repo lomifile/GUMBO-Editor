@@ -96,7 +96,7 @@ void IO::editor_process_keypress()
 		exit(0);
 		break;
 
-	case CTRL_KEY('n'):
+	case CTRL_KEY('o'):
 		switch (line_nums)
 		{
 		case 1:
@@ -245,7 +245,7 @@ void IO::editor_draw_rows(struct InputBuffer* inputBuffer)
 			{
 				char welcome[80];
 				int welcomelen = snprintf(welcome, sizeof(welcome),
-					"Editor -- version %s", "1.0.0");
+					"GUMBO -- version %s", VERSION);
 				if (welcomelen > e.screencols) welcomelen = e.screencols;
 				int padding = (e.screencols - welcomelen) / 2;
 				if (padding)

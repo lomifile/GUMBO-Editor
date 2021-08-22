@@ -1,5 +1,5 @@
-#ifndef EDITOR_SRC_IO_H
-#define EDITOR_SRC_IO_H
+#ifndef GUMBO_SRC_IO_H
+#define GUMBO_SRC_IO_H
 
 #include <cstdio>
 #include <cstdlib>
@@ -18,6 +18,7 @@
 #define CTRL_KEY(k) ((k) & 0x1f)
 #define INPUT_BUFFER_INIT {NULL, 0}
 #define QUIT_TIMES 3
+#define VERSION "0.0.1->Alpha"
 
 struct InputBuffer
 {
@@ -60,4 +61,4 @@ public:
 	static void line_numbers(struct InputBuffer *inputBuffer, int line);
 };
 
-#endif //EDITOR_SRC_IO_H
+#endif //GUMBO_SRC_IO_H

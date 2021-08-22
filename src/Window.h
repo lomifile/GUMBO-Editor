@@ -1,9 +1,5 @@
-//
-// Created by filip on 19. 08. 2021..
-//
-
-#ifndef EDITOR_SRC_WINDOW_H
-#define EDITOR_SRC_WINDOW_H
+#ifndef GUMBO_SRC_WINDOW_H
+#define GUMBO_SRC_WINDOW_H
 
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -21,4 +17,4 @@ namespace Window
 	void move_cursor(int key);
 }
 
-#endif //EDITOR_SRC_WINDOW_H
+#endif //GUMBO_SRC_WINDOW_H

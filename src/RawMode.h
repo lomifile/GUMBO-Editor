@@ -1,9 +1,5 @@
-//
-// Created by filip on 19. 08. 2021..
-//
-
-#ifndef EDITOR_SRC_RAWMODE_H
-#define EDITOR_SRC_RAWMODE_H
+#ifndef GUMBO_SRC_RAWMODE_H
+#define GUMBO_SRC_RAWMODE_H
 
 #include <iostream>
 #include <termios.h>
@@ -52,4 +48,4 @@ namespace RawMode
 	void editor_set_status_message(const char* fmt, ...);
 };
 
-#endif //EDITOR_SRC_RAWMODE_H
+#endif //GUMBO_SRC_RAWMODE_H

@@ -1,5 +1,5 @@
-#ifndef EDITOR_SRC_FILE_H
-#define EDITOR_SRC_FILE_H
+#ifndef GUMBO_SRC_FILE_H
+#define GUMBO_SRC_FILE_H
 
 #include <cstdio>
 #include <cstdlib>
@@ -59,4 +59,4 @@ namespace File
 	void editor_find_callback(char* query, int key);
 }
 
-#endif //EDITOR_SRC_FILE_H
+#endif //GUMBO_SRC_FILE_H

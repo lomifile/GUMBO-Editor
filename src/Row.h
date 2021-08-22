@@ -1,9 +1,5 @@
-//
-// Created by filip on 20. 08. 2021..
-//
-
-#ifndef EDITOR_SRC_ROW_H
-#define EDITOR_SRC_ROW_H
+#ifndef GUMBO_SRC_ROW_H
+#define GUMBO_SRC_ROW_H
 
 #include <cstdio>
 #include <cstring>
@@ -26,4 +22,4 @@ namespace Row {
 	void editor_insert_row(int at, char *s, size_t len);
 }
 
-#endif //EDITOR_SRC_ROW_H
+#endif //GUMBO_SRC_ROW_H

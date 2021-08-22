@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
-project(Editor CXX)
-project(Editor VERSION 1.0.0)
+project(GUMBO CXX)
+project(GUMBO VERSION 1.0.0)
 add_subdirectory(src)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
