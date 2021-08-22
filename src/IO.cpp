@@ -117,9 +117,12 @@ void IO::editor_process_keypress()
 	case (int)EditorKey::PAGE_UP:
 	case (int)EditorKey::PAGE_DOWN:
 	{
-		if (c == (int)EditorKey::PAGE_UP) {
+		if (c == (int)EditorKey::PAGE_UP)
+		{
 			e.cy = e.rowoff;
-		} else if (c == (int)EditorKey::PAGE_DOWN) {
+		}
+		else if (c == (int)EditorKey::PAGE_DOWN)
+		{
 			e.cy = e.rowoff + e.screenrows - 1;
 			if (e.cy > e.num_rows) e.cy = e.num_rows;
 		}
@@ -170,7 +173,7 @@ void IO::editor_refresh_screen()
 		sizeof(buffer),
 		"\x1b[%d;%dH",
 		(e.cy - e.rowoff) + 1,
-		(e.rx - e.coloff) + 1);
+		(e.rx - e.coloff) + 6);
 	append(&inputBuffer, buffer, (int)strlen(buffer));
 
 	append(&inputBuffer, "\x1b[?25h", 6);
@@ -179,15 +182,55 @@ void IO::editor_refresh_screen()
 	free_input_buffer(&inputBuffer);
 }
 
+void IO::line_numbers(struct InputBuffer* inputBuffer, int line)
+{
+	char num[10];
+	//for now
+	if (line < 10)
+	{
+		int numlen = snprintf(num, sizeof(num), "%d    ", line);
+//		if (numlen > e.screencols) numlen = e.screencols;
+		append(inputBuffer, num, numlen);
+//		int padding = (e.screencols - numlen) / 32;
+//		if (padding)
+//		{
+//			padding--;
+//		}
+//		while (padding--) append(inputBuffer, " ", 1);
+	}
+	else if (line >= 10)
+	{
+		int numlen = snprintf(num, sizeof(num), "%d   ", line);
+//		if (numlen > e.screencols) numlen = e.screencols;
+		append(inputBuffer, num, numlen);
+//		int padding = (e.screencols - numlen) / 32;
+//		if (padding)
+//		{
+//			padding--;
+//		}
+//		while (padding--) append(inputBuffer, " ", 1);
+	}
+	else if (line >= 100)
+	{
+		int numlen = snprintf(num, sizeof(num), "%d", line);
+		if (numlen > e.screencols) numlen = e.screencols;
+		append(inputBuffer, num, numlen);
+		int padding = (e.screencols - numlen) / 48;
+		if (padding)
+		{
+			padding--;
+		}
+		while (padding--) append(inputBuffer, " ", 1);
+	}
+}
+
 void IO::editor_draw_rows(struct InputBuffer* inputBuffer)
 {
 	int y;
 	for (y = 0; y < e.screenrows; y++)
 	{
-//		char num[5];
-//		int numlen = snprintf(num, sizeof(num), "%d  ", y);
-//		append(inputBuffer, num, numlen);
 		int filerow = y + e.rowoff;
+		line_numbers(inputBuffer, filerow + 1);
 		if (filerow >= e.num_rows)
 		{
 			if (e.num_rows == 0 && y == e.screenrows / 3)
@@ -227,7 +270,8 @@ void IO::editor_draw_rows(struct InputBuffer* inputBuffer)
 					append(inputBuffer, "\x1b[7m", 4);
 					append(inputBuffer, &sym, 1);
 					append(inputBuffer, "\x1b[m", 3);
-					if (current_color != -1) {
+					if (current_color != -1)
+					{
 						char buf[16];
 						int clen = snprintf(buf, sizeof(buf), "\x1b[%dm", current_color);
 						append(inputBuffer, buf, clen);
@@ -281,20 +325,25 @@ void IO::free_input_buffer(struct InputBuffer* inputBuffer)
 void IO::editor_scroll()
 {
 	e.rx = 0;
-	if (e.cy < e.num_rows) {
+	if (e.cy < e.num_rows)
+	{
 		e.rx = Row::editor_row_cx_to_rx(&e.row[e.cy], e.cx);
 	}
 
-	if (e.cy < e.rowoff) {
+	if (e.cy < e.rowoff)
+	{
 		e.rowoff = e.cy;
 	}
-	if (e.cy >= e.rowoff + e.screenrows) {
+	if (e.cy >= e.rowoff + e.screenrows)
+	{
 		e.rowoff = e.cy - e.screenrows + 1;
 	}
-	if (e.rx < e.coloff) {
+	if (e.rx < e.coloff)
+	{
 		e.coloff = e.rx;
 	}
-	if (e.rx >= e.coloff + e.screencols) {
+	if (e.rx >= e.coloff + e.screencols)
+	{
 		e.coloff = e.rx - e.screencols + 1;
 	}
 }
@@ -353,7 +402,7 @@ void IO::editor_delete_char()
 	erow* row = &e.row[e.cy];
 	if (e.cx > 0)
 	{
-		Row::editor_row_delete_cahr(row, (e.cx-1));
+		Row::editor_row_delete_cahr(row, (e.cx - 1));
 		e.cx--;
 	}
 }

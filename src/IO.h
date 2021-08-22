@@ -57,6 +57,7 @@ public:
 	static void editor_delete_char();
 	static void editor_insert_new_line();
 	static char* editor_prompt(char *prompt, void (*callback)(char *, int));
+	static void line_numbers(struct InputBuffer *inputBuffer, int line);
 };
 
 #endif //EDITOR_SRC_IO_H
