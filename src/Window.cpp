@@ -1,5 +1,18 @@
 #include "Window.h"
 
+void Window::handle_change(int unused)
+{
+	update_screen();
+	if (e.cy > e.screenrows) e.cy = e.screenrows - 1;
+	if (e.cx > e.screencols) e.cx = e.screencols - 1;
+	IO::editor_refresh_screen();
+}
+
+void Window::update_screen(){
+	if (Window::get_window_size(&e.screenrows, &e.screencols) == -1) Error::die("getWindowSize");
+	e.screenrows -= 2;
+}
+
 int Window::get_cursor_position(int* rows, int* cols)
 {
 	char buf[32];

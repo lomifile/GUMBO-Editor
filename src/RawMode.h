@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <ctime>
+#include <csignal>
 
 #include "Error.h"
 

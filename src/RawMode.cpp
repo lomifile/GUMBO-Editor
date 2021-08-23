@@ -3,6 +3,9 @@
 
 EditorConfig e;
 
+/** KDE Konsole can give some problems
+ */
+
 void RawMode::init()
 {
 	e.cx = 0;
@@ -17,8 +20,8 @@ void RawMode::init()
 	e.statusmsg[0] = '\0';
 	e.statusmsg_time = 0;
 	e.syntax = NULL;
-	if (Window::get_window_size(&e.screenrows, &e.screencols) == -1) Error::die("getWindowSize");
-	e.screenrows -= 2;
+	Window::update_screen();
+	signal(SIGWINCH, Window::handle_change);
 }
 
 void RawMode::disable()
