@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 		File::editor_open(argv[1]);
 	}
 	IO io = IO();
-	RawMode::editor_set_status_message("HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-N = Line numbers");
+	RawMode::editor_set_status_message("Input CTRL-H for help");
 	while (1)
 	{
 		io.editor_refresh_screen();

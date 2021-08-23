@@ -29,6 +29,7 @@ struct InputBuffer
 enum class EditorKey
 {
 	BACKSPACE = 127,
+	TAB = 9,
 	ARROW_LEFT = 1000,
 	ARROW_RIGHT,
 	ARROW_UP,
@@ -45,6 +46,7 @@ extern EditorConfig e;
 class IO
 {
 public:
+	~IO();
 	static int editor_read_key();
 	static void editor_process_keypress();
 	static void editor_refresh_screen();
@@ -59,6 +61,7 @@ public:
 	static void editor_insert_new_line();
 	static char* editor_prompt(char *prompt, void (*callback)(char *, int));
 	static void line_numbers(struct InputBuffer *inputBuffer, int line);
+	static void toogle_line_nums();
 };
 
 #endif //GUMBO_SRC_IO_H

@@ -37,24 +37,33 @@ int Row::editor_row_cx_to_rx(erow* row, int cx)
 
 void Row::update_row(erow* row)
 {
-	int tabs = 0;
-	int j;
+	unsigned int tabs = 0, nonprint = 0;
+	int j, idx;
+	free(row->render);
 	for (j = 0; j < row->size; j++)
-		if (row->chars[j] == '\t') tabs++;
-		free(row->render);
-		row->render = (char*)malloc(row->size + tabs*7 + 1);
-		int idx = 0;
+		if (row->chars[j] == (char)EditorKey::TAB) tabs++;
+
+		unsigned long long allocsize =
+			(unsigned long long) row->size + tabs*8 + nonprint*9 + 1;
+		if (allocsize > UINT32_MAX) {
+			printf("Some line of the edited file is too long for GUMBO\n");
+			exit(1);
+		}
+
+		row->render = (char*)malloc(row->size + tabs*8 + nonprint*9 + 1);
+		idx = 0;
 		for (j = 0; j < row->size; j++) {
-			if (row->chars[j] == '\t') {
+			if (row->chars[j] == (char)EditorKey::TAB) {
 				row->render[idx++] = ' ';
-				while (idx % 8 != 0) row->render[idx++] = ' ';
+				while((idx+1) % 8 != 0) row->render[idx++] = ' ';
 			} else {
 				row->render[idx++] = row->chars[j];
 			}
 		}
-		row->render[idx] = '\0';
 		row->rsize = idx;
+		row->render[idx] = '\0';
 
+		/* Update the syntax highlighting attributes of the row. */
 		Syntax::editor_update_syntax(row);
 }
 

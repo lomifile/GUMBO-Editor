@@ -1,6 +1,14 @@
 #include "IO.h"
 
 int line_nums = 0;
+static int quit_times = QUIT_TIMES;
+
+IO::~IO()
+{
+	write(STDOUT_FILENO, "\x1b[2J", 4);
+	write(STDOUT_FILENO, "\x1b[H", 3);
+	exit(0);
+}
 
 int IO::editor_read_key()
 {
@@ -74,9 +82,21 @@ int IO::editor_read_key()
 	}
 }
 
+void IO::toogle_line_nums()
+{
+	switch (line_nums)
+	{
+	case 1:
+		line_nums = 0;
+		break;
+	case 0:
+		line_nums = 1;
+		break;
+	}
+}
+
 void IO::editor_process_keypress()
 {
-	static int quit_times = QUIT_TIMES;
 	int c = editor_read_key();
 	switch (c)
 	{
@@ -91,21 +111,16 @@ void IO::editor_process_keypress()
 			quit_times--;
 			return;
 		}
-		write(STDOUT_FILENO, "\x1b[2J", 4);
-		write(STDOUT_FILENO, "\x1b[H", 3);
-		exit(0);
+		IO();
 		break;
 
-	case CTRL_KEY('o'):
-		switch (line_nums)
-		{
-		case 1:
-			line_nums = 0;
-			break;
-		case 0:
-			line_nums = 1;
-			break;
-		}
+	case CTRL_KEY('h'):
+		RawMode::editor_set_status_message("HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-N = Line numbers");
+		break;
+
+	case CTRL_KEY('n'):
+		toogle_line_nums();
+		break;
 
 	case CTRL_KEY('s'):
 		File::save();
@@ -119,7 +134,6 @@ void IO::editor_process_keypress()
 			e.cx = e.row[e.cy].size;
 
 	case (int)EditorKey::BACKSPACE:
-	case CTRL_KEY('h'):
 	case (int)EditorKey::DEL_KEY:
 		if (c == (int)EditorKey::DEL_KEY) Window::move_cursor((int)EditorKey::ARROW_RIGHT);
 		editor_delete_char();
