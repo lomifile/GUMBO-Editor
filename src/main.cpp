@@ -11,6 +11,10 @@ int main(int argc, char *argv[])
 	}
 	IO io = IO();
 	RawMode::editor_set_status_message("Input CTRL-H for help");
+//	if(!Log::check_log()){
+//		Log::create_log_file();
+//		RawMode::editor_set_status_message("Logger created successfully");
+//	}
 	while (1)
 	{
 		io.editor_refresh_screen();
