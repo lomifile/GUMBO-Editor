@@ -7,6 +7,7 @@ IO::~IO()
 {
 	write(STDOUT_FILENO, "\x1b[2J", 4);
 	write(STDOUT_FILENO, "\x1b[H", 3);
+	Logger::append_log(Logger::time_now(), (char*)"Exit success");
 	exit(0);
 }
 
@@ -14,7 +15,7 @@ int IO::editor_read_key()
 {
 	int nread;
 	char c;
-	while ((nread = read(STDIN_FILENO, &c, 1)) != 1)
+	while ((nread = (int)read(STDIN_FILENO, &c, 1)) != 1)
 	{
 		if (nread == -1 && errno != EAGAIN) Error::die("read");
 	}

@@ -28,13 +28,13 @@ void RawMode::disable()
 {
 	if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &e.orig_termios) == -1)
 	{
-		Error::die("tcsetattr");
+		Error::die("tcsetattr error");
 	}
 }
 
 void RawMode::enable()
 {
-	if (tcgetattr(STDIN_FILENO, &e.orig_termios) == -1) Error::die("tcgetattr");
+	if (tcgetattr(STDIN_FILENO, &e.orig_termios) == -1) Error::die("tcgetattr error");
 	atexit(disable);
 
 	struct termios raw = e.orig_termios;
@@ -45,7 +45,7 @@ void RawMode::enable()
 	raw.c_cc[VMIN] = 0;
 	raw.c_cc[VTIME] = 1;
 
-	if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) Error::die("tcsetattr");
+	if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) Error::die("tcsetattr error");
 }
 
 void RawMode::editor_set_status_message(const char* fmt, ...)

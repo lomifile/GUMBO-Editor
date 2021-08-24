@@ -9,7 +9,7 @@ void Window::handle_change(int unused)
 }
 
 void Window::update_screen(){
-	if (Window::get_window_size(&e.screenrows, &e.screencols) == -1) Error::die("getWindowSize");
+	if (Window::get_window_size(&e.screenrows, &e.screencols) == -1) Error::die("getWindowSize error");
 	e.screenrows -= 2;
 }
 

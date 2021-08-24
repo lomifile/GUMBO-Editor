@@ -1,24 +1,24 @@
 #include "File.h"
 
 char* C_HL_extensions[] = { (char*)".c", (char*)".h", (char*)".cpp", (char*)".hpp", NULL };
-char *C_HL_keywords[] = {
+char* C_HL_keywords[] = {
 	/* C Keywords */
-	"auto","break","case","continue","default","do","else","enum",
-	"extern","for","goto","if","register","return","sizeof","static",
-	"struct","switch","typedef","union","volatile","while","NULL",
+	"auto", "break", "case", "continue", "default", "do", "else", "enum",
+	"extern", "for", "goto", "if", "register", "return", "sizeof", "static",
+	"struct", "switch", "typedef", "union", "volatile", "while", "NULL",
 
 	/* C++ Keywords */
-	"alignas","alignof","and","and_eq","asm","bitand","bitor","class",
-	"compl","constexpr","const_cast","deltype","delete","dynamic_cast",
-	"explicit","export","false","friend","inline","mutable","namespace",
-	"new","noexcept","not","not_eq","nullptr","operator","or","or_eq",
-	"private","protected","public","reinterpret_cast","static_assert",
-	"static_cast","template","this","thread_local","throw","true","try",
-	"typeid","typename","virtual","xor","xor_eq",
+	"alignas", "alignof", "and", "and_eq", "asm", "bitand", "bitor", "class",
+	"compl", "constexpr", "const_cast", "deltype", "delete", "dynamic_cast",
+	"explicit", "export", "false", "friend", "inline", "mutable", "namespace",
+	"new", "noexcept", "not", "not_eq", "nullptr", "operator", "or", "or_eq",
+	"private", "protected", "public", "reinterpret_cast", "static_assert",
+	"static_cast", "template", "this", "thread_local", "throw", "true", "try",
+	"typeid", "typename", "virtual", "xor", "xor_eq",
 
 	/* C types */
-	"int|","long|","double|","float|","char|","unsigned|","signed|",
-	"void|","short|","auto|","const|","bool|",NULL
+	"int|", "long|", "double|", "float|", "char|", "unsigned|", "signed|",
+	"void|", "short|", "auto|", "const|", "bool|", NULL
 };
 
 struct EditorSyntax HLDB[] = {
@@ -56,6 +56,7 @@ void File::save()
 				free(buf);
 				e.dirty = 0;
 				RawMode::editor_set_status_message("%d bytes written to disk", len);
+				Logger::append_log(Logger::time_now(), Logger::formated_string((char*)"%d bytes written to disk", len));
 				return;
 			}
 		}
@@ -63,6 +64,7 @@ void File::save()
 	}
 	free(buf);
 	RawMode::editor_set_status_message("Can't save! I/O error: %s", strerror(errno));
+	Logger::append_log(Logger::time_now(), strerror(errno));
 }
 
 char* File::editor_rows_to_string(int* buflen)
@@ -73,9 +75,10 @@ char* File::editor_rows_to_string(int* buflen)
 		totlen += e.row[j].size + 1;
 	*buflen = totlen;
 
-	char *buf = (char*)malloc(totlen);
-	char *p = buf;
-	for (j = 0; j < e.num_rows; j++) {
+	char* buf = (char*)malloc(totlen);
+	char* p = buf;
+	for (j = 0; j < e.num_rows; j++)
+	{
 		memcpy(p, e.row[j].chars, e.row[j].size);
 		p += e.row[j].size;
 		*p = '\n';
@@ -99,7 +102,7 @@ void File::editor_open(char* filename)
 		fclose(fp);
 	}
 	fp = fopen(filename, "r+");
-	if (!fp) Error::die("fopen");
+	if (!fp) Error::die("File open error");
 	char* line = NULL;
 	size_t linecap = 0;
 	ssize_t linelen;
@@ -204,8 +207,8 @@ void Syntax::editor_update_syntax(erow* row)
 	char** keywords = e.syntax->keywords;
 
 	char* scs = e.syntax->singleline_comment_start;
-	char *mcs = e.syntax->multiline_comment_start;
-	char *mce = e.syntax->multiline_comment_end;
+	char* mcs = e.syntax->multiline_comment_start;
+	char* mce = e.syntax->multiline_comment_end;
 
 	int scs_len = scs ? strlen(scs) : 0;
 	int mcs_len = mcs ? strlen(mcs) : 0;
@@ -229,20 +232,27 @@ void Syntax::editor_update_syntax(erow* row)
 			}
 		}
 
-		if (mcs_len && mce_len && !in_string) {
-			if (in_comment) {
+		if (mcs_len && mce_len && !in_string)
+		{
+			if (in_comment)
+			{
 				row->hl[i] = (unsigned char)EditorHighlight::HL_MLCOMMENT;
-				if (!strncmp(&row->render[i], mce, mce_len)) {
+				if (!strncmp(&row->render[i], mce, mce_len))
+				{
 					memset(&row->hl[i], (int)EditorHighlight::HL_MLCOMMENT, mce_len);
 					i += mce_len;
 					in_comment = 0;
 					prev_sep = 1;
 					continue;
-				} else {
+				}
+				else
+				{
 					i++;
 					continue;
 				}
-			} else if (!strncmp(&row->render[i], mcs, mcs_len)) {
+			}
+			else if (!strncmp(&row->render[i], mcs, mcs_len))
+			{
 				memset(&row->hl[i], (int)EditorHighlight::HL_MLCOMMENT, mcs_len);
 				i += mcs_len;
 				in_comment = 1;

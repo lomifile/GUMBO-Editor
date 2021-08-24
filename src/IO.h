@@ -1,3 +1,4 @@
+#pragma once
 #ifndef GUMBO_SRC_IO_H
 #define GUMBO_SRC_IO_H
 
@@ -7,6 +8,7 @@
 #include <cerrno>
 #include <cstring>
 #include <cstdarg>
+#include <lib/logger/log.h>
 
 #include "IO.h"
 #include "Error.h"
@@ -14,6 +16,7 @@
 #include "Window.h"
 #include "Row.h"
 #include "File.h"
+
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 #define INPUT_BUFFER_INIT {NULL, 0}

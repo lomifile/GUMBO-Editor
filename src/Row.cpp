@@ -47,6 +47,7 @@ void Row::update_row(erow* row)
 			(unsigned long long) row->size + tabs*8 + nonprint*9 + 1;
 		if (allocsize > UINT32_MAX) {
 			printf("Some line of the edited file is too long for GUMBO\n");
+			Logger::append_log(Logger::time_now(), (char*)"Some line of the edited file is too long for GUMBO");
 			exit(1);
 		}
 
