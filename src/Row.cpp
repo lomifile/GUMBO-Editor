@@ -38,13 +38,12 @@ int Row::editor_row_cx_to_rx(erow* row, int cx)
 void Row::update_row(erow* row)
 {
 	unsigned int tabs = 0, nonprint = 0;
+	unsigned long long allocsize;
 	int j, idx;
 	free(row->render);
 	for (j = 0; j < row->size; j++)
 		if (row->chars[j] == (char)EditorKey::TAB) tabs++;
-
-		unsigned long long allocsize =
-			(unsigned long long) row->size + tabs*8 + nonprint*9 + 1;
+	allocsize = (unsigned long long)row->size + tabs * 8 + nonprint * 9 + 1;
 		if (allocsize > UINT32_MAX) {
 			printf("Some line of the edited file is too long for GUMBO\n");
 			Logger::append_log(Logger::time_now(), (char*)"Some line of the edited file is too long for GUMBO");
@@ -119,7 +118,7 @@ void Row::delete_row(int at)
 	e.dirty++;
 }
 
-void Row::append_string_(erow* row, char* s, size_t len)
+void Row::append_string(erow* row, char* s, size_t len)
 {
 	row->chars = (char*)realloc(row->chars, row->size + len + 1);
 	memcpy(&row->chars[row->size], s, len);
