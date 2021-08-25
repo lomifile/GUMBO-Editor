@@ -98,6 +98,7 @@ void IO::toogle_line_nums()
 
 void IO::editor_process_keypress()
 {
+	std::string value;
 	int c = editor_read_key();
 	switch (c)
 	{
@@ -172,6 +173,20 @@ void IO::editor_process_keypress()
 
 	case CTRL_KEY('f'):
 		File::search();
+		break;
+
+	case CTRL_KEY('c'):
+		clip::clear();
+		clip::set_text(e.row[e.cy].chars);
+		clip::get_text(value);
+		RawMode::editor_set_status_message("Line copied!");
+		break;
+
+	case CTRL_KEY('v'):
+		clip::get_text(value);
+		Row::append_string(&e.row[e.cy],
+			strcpy(new char[value.length() + 1], value.c_str()),
+			strlen(strcpy(new char[value.length() + 1], value.c_str())));
 		break;
 
 	default:

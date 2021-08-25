@@ -2,7 +2,7 @@
 
 void Logger::create_log_file()
 {
-	FILE *fp = fopen(LOG_FILE, "w");
+	FILE* fp = fopen(LOG_FILE, "w");
 	char t_now[30];
 	if (fp == NULL)return;
 
@@ -14,7 +14,7 @@ void Logger::create_log_file()
 void Logger::append_log(char* date, char* input)
 {
 	strtok(date, "\n");
-	FILE *fp = fopen(LOG_FILE, "a");
+	FILE* fp = fopen(LOG_FILE, "a");
 	if (fp == NULL) return;
 
 	fprintf(fp, "%s --------> %s\n", date, input);
@@ -30,7 +30,7 @@ bool Logger::check_log()
 
 char* Logger::formated_string(char* format, ...)
 {
-	char *string = (char *)malloc(sizeof format);
+	char* string = (char*)malloc(sizeof format);
 	int done;
 	va_list args;
 	va_start(args, format);
