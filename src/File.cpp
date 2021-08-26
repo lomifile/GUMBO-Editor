@@ -56,7 +56,6 @@ void File::save()
 				free(buf);
 				e.dirty = 0;
 				RawMode::editor_set_status_message("%d bytes written to disk", len);
-				Logger::append_log(Logger::time_now(), Logger::formated_string((char*)"%d bytes written to disk", len));
 				return;
 			}
 		}
@@ -165,7 +164,7 @@ void File::editor_find_callback(char* query, int key)
 		{
 			last_match = current;
 			e.cy = current;
-			e.cx = Row::editor_row_rx_to_cx(row, match - row->render);
+			e.cx = Row::editor_row_rx_to_cx(row, (int)(match - row->render));
 			e.rowoff = e.num_rows;
 			saved_hl_line = current;
 			saved_hl = (char*)malloc(row->rsize);
@@ -210,9 +209,9 @@ void Syntax::editor_update_syntax(erow* row)
 	char* mcs = e.syntax->multiline_comment_start;
 	char* mce = e.syntax->multiline_comment_end;
 
-	int scs_len = scs ? strlen(scs) : 0;
-	int mcs_len = mcs ? strlen(mcs) : 0;
-	int mce_len = mce ? strlen(mce) : 0;
+	int scs_len = scs ? (int)strlen(scs) : 0;
+	int mcs_len = mcs ? (int)strlen(mcs) : 0;
+	int mce_len = mce ? (int)strlen(mce) : 0;
 
 	int prev_sep = 1;
 	int in_string = 0;
@@ -260,7 +259,7 @@ void Syntax::editor_update_syntax(erow* row)
 			}
 		}
 
-		if (e.syntax->flags && HL_HIGHLIGHT_STRINGS)
+		if (e.syntax->flags && (int)HL_HIGHLIGHT_STRINGS)
 		{
 			if (in_string)
 			{
@@ -288,7 +287,7 @@ void Syntax::editor_update_syntax(erow* row)
 			}
 		}
 
-		if (e.syntax->flags && HL_HIGHLIGHT_NUMBERS)
+		if (e.syntax->flags && (int)HL_HIGHLIGHT_NUMBERS)
 		{
 			if (isdigit(c) && (prev_sep || prev_hl == (unsigned char)EditorHighlight::HL_NORMAL) ||
 				(c == '.' && prev_hl == (unsigned char)EditorHighlight::HL_NORMAL))
@@ -305,7 +304,7 @@ void Syntax::editor_update_syntax(erow* row)
 			int j;
 			for (j = 0; keywords[j]; j++)
 			{
-				int klen = strlen(keywords[j]);
+				int klen = (int)strlen(keywords[j]);
 				int kw2 = keywords[j][klen - 1] == '|';
 				if (kw2) klen--;
 				if (!strncmp(&row->render[i], keywords[j], klen) &&
@@ -369,9 +368,9 @@ void Syntax::editor_select_syntax_highlight()
 
 	char* ext = strchr(e.filename, '.');
 
-	for (unsigned int j = 0; j < HLDB_ENTRIES; j++)
+	for (auto & j : HLDB)
 	{
-		struct EditorSyntax* s = &HLDB[j];
+		struct EditorSyntax* s = &j;
 		unsigned int i = 0;
 		while (s->filematch[i])
 		{

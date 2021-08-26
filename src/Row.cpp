@@ -92,7 +92,7 @@ void Row::editor_insert_row(int at, char* s, size_t len)
 	e.dirty++;
 }
 
-void Row::editor_row_delete_cahr(erow* row, int at)
+void Row::editor_row_delete_char(erow* row, int at)
 {
 	if (at < 0 || at >= row->size) return;
 	memmove(&row->chars[at], &row->chars[at + 1], row->size - at);

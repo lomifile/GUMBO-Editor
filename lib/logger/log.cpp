@@ -20,6 +20,7 @@ void Logger::append_log(char* date, char* input)
 	fprintf(fp, "%s --------> %s\n", date, input);
 	fclose(fp);
 }
+
 bool Logger::check_log()
 {
 	if (access(LOG_FILE, F_OK) != -1)
@@ -31,10 +32,9 @@ bool Logger::check_log()
 char* Logger::formated_string(char* format, ...)
 {
 	char* string = (char*)malloc(sizeof format);
-	int done;
 	va_list args;
 	va_start(args, format);
-	done = vsnprintf(string, (uint32_t)strlen(format), format, args);
+	vsnprintf(string, (uint32_t)strlen(format), format, args);
 	va_end(args);
 	return string;
 }

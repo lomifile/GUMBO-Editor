@@ -15,7 +15,7 @@ namespace Row {
 	void editor_row_insert_char(erow *row, int at, int c);
 	void update_row(erow *row);
 //	void editor_append_row(char *s, size_t len);
-	void editor_row_delete_cahr(erow *row, int at);
+	void editor_row_delete_char(erow *row, int at);
 	void free_row(erow *row);
 	void delete_row(int at);
 	void append_string(erow *row, char *s, size_t len);

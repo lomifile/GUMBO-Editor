@@ -284,7 +284,7 @@ void IO::editor_draw_rows(struct InputBuffer* inputBuffer)
 					padding--;
 				}
 				while (padding--) append(inputBuffer, " ", 1);
-				append(inputBuffer, welcome, welcomelen);
+				append(inputBuffer, (char*)welcome, welcomelen);
 			}
 			else
 			{
@@ -440,7 +440,7 @@ void IO::editor_delete_char()
 	erow* row = &e.row[e.cy];
 	if (e.cx > 0)
 	{
-		Row::editor_row_delete_cahr(row, (e.cx - 1));
+		Row::editor_row_delete_char(row, (e.cx - 1));
 		e.cx--;
 	}
 	else if (e.cy != 0)
