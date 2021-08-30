@@ -24,27 +24,12 @@
 		NULL, 0           \
 	}
 #define QUIT_TIMES 3
-#define VERSION "0.0.1->Alpha"
+#define VERSION "0.0.2->Alpha"
 
 struct InputBuffer
 {
 	char *b;
 	int len;
-};
-
-enum class EditorKey
-{
-	BACKSPACE = 127,
-	TAB = 9,
-	ARROW_LEFT = 1000,
-	ARROW_RIGHT,
-	ARROW_UP,
-	ARROW_DOWN,
-	PAGE_UP,
-	PAGE_DOWN,
-	HOME_KEY,
-	END_KEY,
-	DEL_KEY
 };
 
 extern EditorConfig e;

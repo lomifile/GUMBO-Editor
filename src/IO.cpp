@@ -62,7 +62,7 @@ void IO::editor_process_keypress()
 	case KEY_HOME:
 		e.cx = 0;
 		break;
-	case (int)EditorKey::END_KEY:
+	case KEY_END:
 		if (e.cy < e.num_rows)
 			e.cx = e.row[e.cy].size;
 
@@ -71,14 +71,14 @@ void IO::editor_process_keypress()
 		editor_delete_char();
 		break;
 
-	case (int)EditorKey::PAGE_UP:
-	case (int)EditorKey::PAGE_DOWN:
+	case KEY_PPAGE:
+	case KEY_NPAGE:
 	{
-		if (c == (int)EditorKey::PAGE_UP)
+		if (c == KEY_PPAGE)
 		{
 			e.cy = e.rowoff;
 		}
-		else if (c == (int)EditorKey::PAGE_DOWN)
+		else if (c == KEY_NPAGE)
 		{
 			e.cy = e.rowoff + e.screenrows - 1;
 			if (e.cy > e.num_rows)
@@ -87,7 +87,7 @@ void IO::editor_process_keypress()
 
 		int times = e.screenrows;
 		while (times--)
-			Window::move_cursor(c == (int)EditorKey::PAGE_UP ? (int)EditorKey::ARROW_UP : (int)EditorKey::ARROW_DOWN);
+			Window::move_cursor(c == KEY_PPAGE ? KEY_UP : KEY_DOWN);
 		break;
 	}
 
@@ -392,7 +392,7 @@ void IO::editor_delete_char()
 			Row::delete_row(e.cy);
 		}
 		e.cy--;
-		Window::move_cursor((int)EditorKey::ARROW_RIGHT);
+		Window::move_cursor(KEY_RIGHT);
 	}
 }
 
