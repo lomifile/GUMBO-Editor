@@ -7,15 +7,19 @@ int main(int argc, char *argv[])
 {
 	RawMode::enable();
 	RawMode::init();
-	if (argc >= 2) {
+	if (argc >= 2)
+	{
 		File::editor_open(argv[1]);
 	}
-	IO io = IO();
+
 	RawMode::editor_set_status_message("Input CTRL-H for help");
-	if(!Logger::check_log()){
+	if (!Logger::check_log())
+	{
 		Logger::create_log_file();
 		RawMode::editor_set_status_message("Logger created successfully");
 	}
+	IO io = IO();
+	refresh();
 	while (1)
 	{
 		io.editor_refresh_screen();

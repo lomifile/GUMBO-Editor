@@ -1,5 +1,11 @@
 cmake-build-debug
 build
 .idea
+.vscode 
 gumboeditorlog.txt
+
+# Test files
 test.c
+proba
+proba.c
+proba.txt

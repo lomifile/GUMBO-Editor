@@ -1,7 +1,7 @@
 #include "File.h"
 
-char* C_HL_extensions[] = { (char*)".c", (char*)".h", (char*)".cpp", (char*)".hpp", NULL };
-char* C_HL_keywords[] = {
+char *C_HL_extensions[] = {(char *)".c", (char *)".h", (char *)".cpp", (char *)".hpp", NULL};
+char *C_HL_keywords[] = {
 	/* C Keywords */
 	"auto", "break", "case", "continue", "default", "do", "else", "enum",
 	"extern", "for", "goto", "if", "register", "return", "sizeof", "static",
@@ -18,24 +18,24 @@ char* C_HL_keywords[] = {
 
 	/* C types */
 	"int|", "long|", "double|", "float|", "char|", "unsigned|", "signed|",
-	"void|", "short|", "auto|", "const|", "bool|", NULL
-};
+	"void|", "short|", "auto|", "const|", "bool|", NULL};
 
 struct EditorSyntax HLDB[] = {
 	{
-		(char*)"c",
+		(char *)"c",
 		C_HL_extensions,
 		C_HL_keywords,
-		(char*)"//", (char*)"/*", (char*)"*/",
+		(char *)"//",
+		(char *)"/*",
+		(char *)"*/",
 		HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS,
-	}
-};
+	}};
 
 void File::save()
 {
 	if (e.filename == NULL)
 	{
-		e.filename = IO::editor_prompt((char*)"Save as: %s (ESC to cancel)", NULL);
+		e.filename = IO::editor_prompt((char *)"Save as: %s (ESC to cancel)", NULL);
 		if (e.filename == NULL)
 		{
 			RawMode::editor_set_status_message("Save aborted");
@@ -44,7 +44,7 @@ void File::save()
 		Syntax::editor_select_syntax_highlight();
 	}
 	int len;
-	char* buf = editor_rows_to_string(&len);
+	char *buf = editor_rows_to_string(&len);
 	int fd = open(e.filename, O_RDWR | O_CREAT, 0644);
 	if (fd != -1)
 	{
@@ -66,7 +66,7 @@ void File::save()
 	Logger::append_log(Logger::time_now(), strerror(errno));
 }
 
-char* File::editor_rows_to_string(int* buflen)
+char *File::editor_rows_to_string(int *buflen)
 {
 	int totlen = 0;
 	int j;
@@ -74,8 +74,8 @@ char* File::editor_rows_to_string(int* buflen)
 		totlen += e.row[j].size + 1;
 	*buflen = totlen;
 
-	char* buf = (char*)malloc(totlen);
-	char* p = buf;
+	char *buf = (char *)malloc(totlen);
+	char *p = buf;
 	for (j = 0; j < e.num_rows; j++)
 	{
 		memcpy(p, e.row[j].chars, e.row[j].size);
@@ -87,9 +87,9 @@ char* File::editor_rows_to_string(int* buflen)
 	return buf;
 }
 
-void File::editor_open(char* filename)
+void File::editor_open(char *filename)
 {
-	FILE* fp;
+	FILE *fp;
 	free(e.filename);
 	e.filename = strdup(filename);
 
@@ -101,14 +101,15 @@ void File::editor_open(char* filename)
 		fclose(fp);
 	}
 	fp = fopen(filename, "r+");
-	if (!fp) Error::die("File open error");
-	char* line = NULL;
+	if (!fp)
+		Error::die("File open error");
+	char *line = NULL;
 	size_t linecap = 0;
 	ssize_t linelen;
 	while ((linelen = getline(&line, &linecap, fp)) != -1)
 	{
 		while (linelen > 0 && (line[linelen - 1] == '\n' ||
-			line[linelen - 1] == '\r'))
+							   line[linelen - 1] == '\r'))
 			linelen--;
 		Row::editor_insert_row(e.num_rows, line, linelen);
 	}
@@ -117,13 +118,13 @@ void File::editor_open(char* filename)
 	e.dirty = 0;
 }
 
-void File::editor_find_callback(char* query, int key)
+void File::editor_find_callback(char *query, int key)
 {
 	static int last_match = -1;
 	static int direction = 1;
 
 	static int saved_hl_line;
-	static char* saved_hl = NULL;
+	static char *saved_hl = NULL;
 	if (saved_hl)
 	{
 		memcpy(e.row[saved_hl_line].hl, saved_hl, e.row[saved_hl_line].rsize);
@@ -131,17 +132,17 @@ void File::editor_find_callback(char* query, int key)
 		saved_hl = NULL;
 	}
 
-	if (key == '\r' || key == '\x1b')
+	if (key == 10 || key == 27)
 	{
 		last_match = -1;
 		direction = 1;
 		return;
 	}
-	else if (key == (int)EditorKey::ARROW_RIGHT || key == (int)EditorKey::ARROW_DOWN)
+	else if (key == KEY_RIGHT || key == KEY_DOWN)
 	{
 		direction = 1;
 	}
-	else if (key == (int)EditorKey::ARROW_LEFT || key == (int)EditorKey::ARROW_UP)
+	else if (key == KEY_RIGHT || key == KEY_DOWN)
 	{
 		direction = -1;
 	}
@@ -150,16 +151,19 @@ void File::editor_find_callback(char* query, int key)
 		last_match = -1;
 		direction = 1;
 	}
-	if (last_match == -1) direction = 1;
+	if (last_match == -1)
+		direction = 1;
 	int current = last_match;
 	int i;
 	for (i = 0; i < e.num_rows; i++)
 	{
 		current += direction;
-		if (current == -1) current = e.num_rows - 1;
-		else if (current == e.num_rows) current = 0;
-		erow* row = &e.row[current];
-		char* match = strstr(row->render, query);
+		if (current == -1)
+			current = e.num_rows - 1;
+		else if (current == e.num_rows)
+			current = 0;
+		erow *row = &e.row[current];
+		char *match = strstr(row->render, query);
 		if (match)
 		{
 			last_match = current;
@@ -167,7 +171,7 @@ void File::editor_find_callback(char* query, int key)
 			e.cx = Row::editor_row_rx_to_cx(row, (int)(match - row->render));
 			e.rowoff = e.num_rows;
 			saved_hl_line = current;
-			saved_hl = (char*)malloc(row->rsize);
+			saved_hl = (char *)malloc(row->rsize);
 			memcpy(saved_hl, row->hl, row->rsize);
 			memset(&row->hl[match - row->render], (int)EditorHighlight::HL_MATCH, strlen(query));
 			break;
@@ -182,8 +186,8 @@ void File::search()
 	int saved_coloff = e.coloff;
 	int saved_rowoff = e.rowoff;
 
-	char* query = IO::editor_prompt((char*)"Search: %s (Use ESC/Arrows/Enter)",
-		File::editor_find_callback);
+	char *query = IO::editor_prompt((char *)"Search: %s (Use ESC/Arrows/Enter)",
+									File::editor_find_callback);
 	if (query)
 	{
 		free(query);
@@ -197,17 +201,18 @@ void File::search()
 	}
 }
 
-void Syntax::editor_update_syntax(erow* row)
+void Syntax::editor_update_syntax(erow *row)
 {
-	row->hl = (unsigned char*)realloc(row->hl, row->rsize);
+	row->hl = (unsigned char *)realloc(row->hl, row->rsize);
 	memset(row->hl, (int)EditorHighlight::HL_NORMAL, row->rsize);
 
-	if (e.syntax == NULL) return;
-	char** keywords = e.syntax->keywords;
+	if (e.syntax == NULL)
+		return;
+	char **keywords = e.syntax->keywords;
 
-	char* scs = e.syntax->singleline_comment_start;
-	char* mcs = e.syntax->multiline_comment_start;
-	char* mce = e.syntax->multiline_comment_end;
+	char *scs = e.syntax->singleline_comment_start;
+	char *mcs = e.syntax->multiline_comment_start;
+	char *mce = e.syntax->multiline_comment_end;
 
 	int scs_len = scs ? (int)strlen(scs) : 0;
 	int mcs_len = mcs ? (int)strlen(mcs) : 0;
@@ -215,7 +220,8 @@ void Syntax::editor_update_syntax(erow* row)
 
 	int prev_sep = 1;
 	int in_string = 0;
-	int in_comment = (row->idx > 0 && e.row[row->idx - 1].hl_open_comment);;
+	int in_comment = (row->idx > 0 && e.row[row->idx - 1].hl_open_comment);
+	;
 	int i = 0;
 	while (i < row->rsize)
 	{
@@ -270,7 +276,8 @@ void Syntax::editor_update_syntax(erow* row)
 					i += 2;
 					continue;
 				}
-				if (c == in_string) in_string = 0;
+				if (c == in_string)
+					in_string = 0;
 				i++;
 				prev_sep = 1;
 				continue;
@@ -306,13 +313,14 @@ void Syntax::editor_update_syntax(erow* row)
 			{
 				int klen = (int)strlen(keywords[j]);
 				int kw2 = keywords[j][klen - 1] == '|';
-				if (kw2) klen--;
+				if (kw2)
+					klen--;
 				if (!strncmp(&row->render[i], keywords[j], klen) &&
 					is_separator(row->render[i + klen]))
 				{
 					memset(&row->hl[i],
-						kw2 ? (int)EditorHighlight::HL_KEYWORD1 : (int)EditorHighlight::HL_KEYWORD2,
-						klen);
+						   kw2 ? (int)EditorHighlight::HL_KEYWORD1 : (int)EditorHighlight::HL_KEYWORD2,
+						   klen);
 					i += klen;
 					break;
 				}
@@ -364,13 +372,14 @@ void Syntax::editor_select_syntax_highlight()
 {
 	e.syntax = NULL;
 
-	if (e.filename == NULL) return;
+	if (e.filename == NULL)
+		return;
 
-	char* ext = strchr(e.filename, '.');
+	char *ext = strchr(e.filename, '.');
 
-	for (auto & j : HLDB)
+	for (auto &j : HLDB)
 	{
-		struct EditorSyntax* s = &j;
+		struct EditorSyntax *s = &j;
 		unsigned int i = 0;
 		while (s->filematch[i])
 		{

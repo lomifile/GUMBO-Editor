@@ -52,7 +52,7 @@ void Window::move_cursor(int key)
 
 	switch (key)
 	{
-	case (int)EditorKey::ARROW_LEFT:
+	case KEY_LEFT:
 		if (e.cx != 0) {
 			e.cx--;
 		} else if (e.cy > 0) {
@@ -60,7 +60,7 @@ void Window::move_cursor(int key)
 			e.cx = e.row[e.cy].size;
 		}
 		break;
-	case (int)EditorKey::ARROW_RIGHT:
+	case KEY_RIGHT:
 		if (row && e.cx < row->size) {
 			e.cx = e.row[e.cy].size;
 		} else if (row && e.cx == row->size) {
@@ -68,12 +68,12 @@ void Window::move_cursor(int key)
 			e.cx = 0;
 		}
 		break;
-	case (int)EditorKey::ARROW_UP:
+	case KEY_UP:
 		if (e.cy != 0) {
 			e.cy--;
 		}
 		break;
-	case (int)EditorKey::ARROW_DOWN:
+	case KEY_DOWN:
 		if (e.cy < e.num_rows) {
 			e.cy++;
 		}

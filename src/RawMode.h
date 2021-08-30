@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <ctime>
 #include <csignal>
+#include <curses.h>
 
 #include "Error.h"
 
@@ -40,6 +41,7 @@ struct EditorConfig
 };
 
 extern EditorConfig e;
+extern WINDOW *win;
 
 namespace RawMode
 {
