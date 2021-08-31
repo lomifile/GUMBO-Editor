@@ -16,6 +16,7 @@ void RawMode::init()
 	noecho();
 	keypad(stdscr, TRUE);
 	Window::update_screen();
+	signal(SIGWINCH, Window::handle_change);
 }
 
 void RawMode::disable()

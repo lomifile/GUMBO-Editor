@@ -1,9 +1,20 @@
 #include "File.h"
 
+/* python */
+char *PY_HL_extensions[] = {".py", "python", NULL};
+char *PY_HL_keywords[] = {
+	"from", "def", "if", "while", "for", "break", "return", "continue", "else", "elif",
+	"import", "try", "except", "in", "and", "or", "is", "not", "with", "as",
+	"True", "False", "None", "class",
+	/* Python types */
+	"int|", "str|", "unicode|", "dict|", "float|", "repr|", "long|", "eval|",
+	"tuple|", "list|", "set|", "frozenset|", "chr|", "unichr|", "ord|", "hex|",
+	NULL};
+
 char *C_HL_extensions[] = {(char *)".c", (char *)".h", (char *)".cpp", (char *)".hpp", NULL};
 char *C_HL_keywords[] = {
 	/* C Keywords */
-	"auto", "break", "case", "continue", "default", "do", "else", "enum",
+	"#define", "#include", "auto", "break", "case", "continue", "default", "do", "else", "enum",
 	"extern", "for", "goto", "if", "register", "return", "sizeof", "static",
 	"struct", "switch", "typedef", "union", "volatile", "while", "NULL",
 
@@ -28,6 +39,15 @@ struct EditorSyntax HLDB[] = {
 		(char *)"//",
 		(char *)"/*",
 		(char *)"*/",
+		HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS,
+	},
+	{
+		(char *)"python",
+		PY_HL_extensions,
+		PY_HL_keywords,
+		(char *)"#",
+		(char *)"\"\"\"",
+		(char *)"\"\"\"",
 		HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS,
 	}};
 
@@ -100,6 +120,7 @@ void File::editor_open(char *filename)
 		fp = fopen(filename, "w+");
 		fclose(fp);
 	}
+
 	fp = fopen(filename, "r+");
 	if (!fp)
 		Error::die("File open error");
