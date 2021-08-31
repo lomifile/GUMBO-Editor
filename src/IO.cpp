@@ -378,7 +378,7 @@ void IO::editor_delete_char()
 			Row::delete_row(e.cy);
 		}
 		e.cy--;
-		Window::move_cursor(KEY_RIGHT);
+		Window::move_cursor_end_line();
 	}
 }
 

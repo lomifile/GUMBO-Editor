@@ -57,6 +57,11 @@ int Window::get_window_size(int *rows, int *cols)
 	}
 }
 
+void Window::move_cursor_end_line()
+{
+	e.cx = e.row[e.cy].size;
+}
+
 void Window::move_cursor(int key)
 {
 	erow *row = (e.cy >= e.num_rows) ? NULL : &e.row[e.cy];
@@ -77,7 +82,7 @@ void Window::move_cursor(int key)
 	case KEY_RIGHT:
 		if (row && e.cx < row->size)
 		{
-			e.cx = e.row[e.cy].size;
+			e.cx++;
 		}
 		else if (row && e.cx == row->size)
 		{
