@@ -106,20 +106,6 @@ void IO::editor_process_keypress()
 		File::search();
 		break;
 
-	case CTRL_KEY('c'):
-		clip::clear();
-		clip::set_text(e.row[e.cy].chars);
-		clip::get_text(value);
-		RawMode::editor_set_status_message("Line copied!");
-		break;
-
-	case CTRL_KEY('v'):
-		clip::get_text(value);
-		Row::append_string(&e.row[e.cy],
-						   strcpy(new char[value.length() + 1], value.c_str()),
-						   strlen(strcpy(new char[value.length() + 1], value.c_str())));
-		break;
-
 	default:
 		editor_insert_char(c);
 		break;

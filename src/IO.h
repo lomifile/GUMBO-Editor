@@ -9,7 +9,6 @@
 #include <cstring>
 #include <cstdarg>
 #include <lib/logger/log.h>
-#include <lib/clip/clip.h>
 
 #include "IO.h"
 #include "Error.h"
