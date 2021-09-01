@@ -1,9 +1,9 @@
 #include "File.h"
 
 /* python */
-char *PY_HL_extensions[] = {".py", "python", NULL};
+char *PY_HL_extensions[] = {(char*)".py", (char*)"python", NULL};
 char *PY_HL_keywords[] = {
-	"from", "def", "if", "while", "for", "break", "return", "continue", "else", "elif",
+	(char*)"from", "def", "if ", "while", "for", "break", "return", "continue", "else", "elif",
 	"import", "try", "except", "in", "and", "or", "is", "not", "with", "as",
 	"True", "False", "None", "class",
 	/* Python types */

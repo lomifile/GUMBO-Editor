@@ -2,7 +2,6 @@
 #include "Window.h"
 
 EditorConfig e;
-WINDOW *win;
 
 /** 
  * Curses lib init
@@ -21,12 +20,12 @@ void RawMode::init()
 
 void RawMode::disable()
 {
-	delwin(win);
+	delwin(e.win);
 }
 
 void RawMode::enable()
 {
-	win = newwin(e.screenrows, e.screencols, e.cy, e.cx);
+	e.win = newwin(e.screenrows, e.screencols, e.cy, e.cx);
 }
 
 void RawMode::editor_set_status_message(const char *fmt, ...)
