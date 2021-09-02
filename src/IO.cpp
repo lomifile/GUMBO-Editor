@@ -425,7 +425,7 @@ char *IO::editor_prompt(char *prompt, void (*callback)(char *, int))
 			free(buf);
 			return NULL;
 		}
-		else if (c == '\r')
+		else if (c == 10)
 		{
 			if (buflen != 0)
 			{

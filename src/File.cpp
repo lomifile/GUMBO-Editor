@@ -1,4 +1,5 @@
 #include "File.h"
+#include "RawMode.h"
 
 /* python */
 char *PY_HL_extensions[] = {(char*)".py", (char*)"python", NULL};
@@ -63,6 +64,13 @@ void File::save()
 		}
 		Syntax::editor_select_syntax_highlight();
 	}
+    
+    if(access(e.filename, F_OK) == 0)
+    {
+        RawMode::editor_set_status_message((char*)"File already exists!");
+        return;
+    }
+
 	int len;
 	char *buf = editor_rows_to_string(&len);
 	int fd = open(e.filename, O_RDWR | O_CREAT, 0644);
