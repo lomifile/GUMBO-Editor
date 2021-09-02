@@ -2,11 +2,13 @@
 cmake-build-debug
 build
 .idea
+.vscode 
 gumboeditorlog.txt
-test.c
 
-# Testing stuff
+#Testing
 proba
 proba.c
 proba.txt
 c_cpp_properties.json
+*.swp
+*.swo

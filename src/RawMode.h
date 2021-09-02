@@ -1,12 +1,14 @@
+#pragma once 
+
 #ifndef GUMBO_SRC_RAWMODE_H
 #define GUMBO_SRC_RAWMODE_H
 
 #include <iostream>
-#include <termios.h>
 #include <cstdlib>
 #include <unistd.h>
 #include <ctime>
 #include <csignal>
+#include <curses.h>
 
 #include "Error.h"
 
@@ -36,10 +38,11 @@ struct EditorConfig
 	char statusmsg[80];
 	time_t statusmsg_time;
 	struct EditorSyntax* syntax;
-	struct termios orig_termios;
+	WINDOW *win;
 };
 
 extern EditorConfig e;
+extern WINDOW *win;
 
 namespace RawMode
 {

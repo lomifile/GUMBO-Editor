@@ -6,4 +6,4 @@ add_executable(gum main.cpp RawMode.cpp Error.cpp IO.cpp Window.cpp Window.h Raw
 include_directories(${CMAKE_SOURCE_DIR})
 set(CMAKE_BUILD_TYPE Debug)
 target_link_libraries(gum PUBLIC logger)
-target_link_libraries(gum PUBLIC clip)
+target_link_libraries(gum PUBLIC ncurses)
