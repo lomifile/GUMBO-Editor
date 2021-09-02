@@ -4,6 +4,9 @@ build
 .vscode 
 gumboeditorlog.txt
 
+*.swp
+*.swo
+
 # Test files
 test.c
 proba
