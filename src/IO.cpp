@@ -66,8 +66,8 @@ void IO::editor_process_keypress()
 		if (e.cy < e.num_rows)
 			e.cx = e.row[e.cy].size;
 
-        case 127:
-		// if (c == (int)EditorKey::DEL_KEY) Window::move_cursor((int)EditorKey::ARROW_RIGHT);
+        case BACKSPACE:
+		if (c == KEY_DC) Window::move_cursor(KEY_RIGHT);
 		editor_delete_char();
 		break;
 

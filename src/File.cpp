@@ -161,7 +161,7 @@ void File::editor_find_callback(char *query, int key)
 		saved_hl = NULL;
 	}
 
-	if (key == 10 || key == 27)
+	if (key == ENTER || key == 27)
 	{
 		last_match = -1;
 		direction = 1;
