@@ -1,7 +1,7 @@
 # <strong>GUMBO editor</strong>
 
 Simple editor built upon [kilo](https://github.com/antirez/kilo) editor. Still big work in progress although this is
-just fun side project to learn more C/C++.
+just fun side project to learn more C/C++. 
 
 From 0.0.2->Alpha Switching to ncurses. Added handling window creation, key strokes and window refresh.
 
@@ -10,26 +10,6 @@ From 0.0.2->Alpha Switching to ncurses. Added handling window creation, key stro
 For now all you can do is edit text and look at text as you want.
 You can copy and paste text as you please as you can now mark and copy lines as you please, terminal is muc more open than it was since ncurses handles that better.
 Also editor now can highlight python syntax.
-
-TODO:
-
-<ul>
-<li>
-Improve search ✔️
-</li>
-<li>
-More syntax highlighting 
-</li>
-<li>
-Replace function
-</li>
-<li>
-Copy & paste function ✔️
-</li>
-<li>
-Responsive window change ✔️
-</li>
-</ul>
 
 # Compile and run
 
