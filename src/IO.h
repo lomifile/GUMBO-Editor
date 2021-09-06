@@ -1,4 +1,5 @@
 #pragma once
+
 #ifndef GUMBO_SRC_IO_H
 #define GUMBO_SRC_IO_H
 
@@ -24,6 +25,8 @@
 	}
 #define QUIT_TIMES 3
 #define VERSION "0.0.2->Alpha"
+#define BACKSPACE 127
+#define ENTER 10
 
 struct InputBuffer
 {

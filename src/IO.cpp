@@ -32,7 +32,7 @@ void IO::editor_process_keypress()
 	switch (c)
 	{
 	// Enter key
-	case 10:
+	case ENTER:
 		editor_insert_new_line();
 		break;
 	case CTRL_KEY('q'):
@@ -66,7 +66,7 @@ void IO::editor_process_keypress()
 		if (e.cy < e.num_rows)
 			e.cx = e.row[e.cy].size;
 
-	case KEY_BACKSPACE:
+        case 127:
 		// if (c == (int)EditorKey::DEL_KEY) Window::move_cursor((int)EditorKey::ARROW_RIGHT);
 		editor_delete_char();
 		break;
@@ -412,7 +412,7 @@ char *IO::editor_prompt(char *prompt, void (*callback)(char *, int))
 		RawMode::editor_set_status_message(prompt, buf);
 		editor_refresh_screen();
 		int c = getch();
-		if (c == KEY_DC || c == CTRL_KEY('h') || c == KEY_BACKSPACE)
+		if (c == KEY_DC || c == CTRL_KEY('h') || c == BACKSPACE)
 		{
 			if (buflen != 0)
 				buf[--buflen] = '\0';
@@ -425,7 +425,7 @@ char *IO::editor_prompt(char *prompt, void (*callback)(char *, int))
 			free(buf);
 			return NULL;
 		}
-		else if (c == 10)
+		else if (c == ENTER)
 		{
 			if (buflen != 0)
 			{
