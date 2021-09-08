@@ -31,7 +31,7 @@ void IO::editor_process_keypress()
 	int c = getch();
 	switch (c)
 	{
-	// Enter key
+
     case ENTER:
 	case KEY_ENTER:
 		editor_insert_new_line();

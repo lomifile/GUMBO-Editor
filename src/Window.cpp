@@ -68,6 +68,7 @@ void Window::move_cursor(int key)
 
 	switch (key)
 	{
+
 	case KEY_LEFT:
 		if (e.cx != 0)
 		{
@@ -79,6 +80,7 @@ void Window::move_cursor(int key)
 			e.cx = e.row[e.cy].size;
 		}
 		break;
+
 	case KEY_RIGHT:
 		if (row && e.cx < row->size)
 		{
@@ -90,12 +92,14 @@ void Window::move_cursor(int key)
 			e.cx = 0;
 		}
 		break;
+
 	case KEY_UP:
 		if (e.cy != 0)
 		{
 			e.cy--;
 		}
 		break;
+
 	case KEY_DOWN:
 		if (e.cy < e.num_rows)
 		{
