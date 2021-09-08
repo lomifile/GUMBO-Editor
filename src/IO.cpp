@@ -32,6 +32,7 @@ void IO::editor_process_keypress()
 	switch (c)
 	{
 	// Enter key
+    case ENTER:
 	case KEY_ENTER:
 		editor_insert_new_line();
 		break;
