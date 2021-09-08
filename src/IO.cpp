@@ -32,7 +32,7 @@ void IO::editor_process_keypress()
 	switch (c)
 	{
 	// Enter key
-	case ENTER:
+	case KEY_ENTER:
 		editor_insert_new_line();
 		break;
 	case CTRL_KEY('q'):
@@ -65,8 +65,9 @@ void IO::editor_process_keypress()
 	case KEY_END:
 		if (e.cy < e.num_rows)
 			e.cx = e.row[e.cy].size;
-
-        case BACKSPACE:
+    
+    case BACKSPACE:
+    case KEY_BACKSPACE:
 		if (c == KEY_DC) Window::move_cursor(KEY_RIGHT);
 		editor_delete_char();
 		break;
