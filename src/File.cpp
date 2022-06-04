@@ -2,9 +2,9 @@
 #include "RawMode.h"
 
 /* python */
-char *PY_HL_extensions[] = {(char*)".py", (char*)"python", NULL};
+char *PY_HL_extensions[] = {(char *)".py", (char *)"python", NULL};
 char *PY_HL_keywords[] = {
-	(char*)"from", "def", "if ", "while", "for", "break", "return", "continue", "else", "elif",
+	(char *)"from", "def", "if ", "while", "for", "break", "return", "continue", "else", "elif",
 	"import", "try", "except", "in", "and", "or", "is", "not", "with", "as",
 	"True", "False", "None", "class",
 	/* Python types */
@@ -59,17 +59,17 @@ void File::save()
 		e.filename = IO::editor_prompt((char *)"Save as: %s (ESC to cancel)", NULL);
 		if (e.filename == NULL)
 		{
-			RawMode::editor_set_status_message("Save aborted");
+			RawMode::get()->editor_set_status_message("Save aborted");
 			return;
 		}
 		Syntax::editor_select_syntax_highlight();
 	}
-    
-    if(access(e.filename, F_OK) == 0)
-    {
-        RawMode::editor_set_status_message((char*)"File already exists!");
-        return;
-    }
+
+	if (access(e.filename, F_OK) == 0)
+	{
+		RawMode::get()->editor_set_status_message((char *)"File already exists!");
+		return;
+	}
 
 	int len;
 	char *buf = editor_rows_to_string(&len);
@@ -83,14 +83,14 @@ void File::save()
 				close(fd);
 				free(buf);
 				e.dirty = 0;
-				RawMode::editor_set_status_message("%d bytes written to disk", len);
+				RawMode::get()->editor_set_status_message("%d bytes written to disk", len);
 				return;
 			}
 		}
 		close(fd);
 	}
 	free(buf);
-	RawMode::editor_set_status_message("Can't save! I/O error: %s", strerror(errno));
+	RawMode::get()->editor_set_status_message("Can't save! I/O error: %s", strerror(errno));
 	Logger::append_log(Logger::time_now(), strerror(errno));
 }
 

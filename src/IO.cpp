@@ -15,11 +15,11 @@ void IO::toogle_line_nums()
 	switch (line_nums)
 	{
 	case 1:
-		RawMode::editor_set_status_message("Line numbers: off");
+		RawMode::get()->editor_set_status_message("Line numbers: off");
 		line_nums = 0;
 		break;
 	case 0:
-		RawMode::editor_set_status_message("Line numbers: on");
+		RawMode::get()->editor_set_status_message("Line numbers: on");
 		line_nums = 1;
 		break;
 	}
@@ -32,16 +32,16 @@ void IO::editor_process_keypress()
 	switch (c)
 	{
 
-    case ENTER:
+	case ENTER:
 	case KEY_ENTER:
 		editor_insert_new_line();
 		break;
 	case CTRL_KEY('q'):
 		if (e.dirty && quit_times > 0)
 		{
-			RawMode::editor_set_status_message("File has unsaved changes. "
-											   "Press Ctrl-Q %d more times to quit.",
-											   quit_times);
+			RawMode::get()->editor_set_status_message("File has unsaved changes. "
+													  "Press Ctrl-Q %d more times to quit.",
+													  quit_times);
 			quit_times--;
 			return;
 		}
@@ -49,7 +49,7 @@ void IO::editor_process_keypress()
 		break;
 
 	case CTRL_KEY('h'):
-		RawMode::editor_set_status_message("HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-N = Line numbers");
+		RawMode::get()->editor_set_status_message("HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-N = Line numbers");
 		break;
 
 	case CTRL_KEY('n'):
@@ -66,10 +66,11 @@ void IO::editor_process_keypress()
 	case KEY_END:
 		if (e.cy < e.num_rows)
 			e.cx = e.row[e.cy].size;
-    
-    case BACKSPACE:
-    case KEY_BACKSPACE:
-		if (c == KEY_DC) Window::move_cursor(KEY_RIGHT);
+
+	case BACKSPACE:
+	case KEY_BACKSPACE:
+		if (c == KEY_DC)
+			Window::move_cursor(KEY_RIGHT);
 		editor_delete_char();
 		break;
 
@@ -156,7 +157,7 @@ void IO::editor_refresh_screen()
 void IO::line_numbers(struct InputBuffer *inputBuffer, int line)
 {
 	char num[10];
-	//for now
+	// for now
 	if (line < 10)
 	{
 		int numlen = snprintf(num, sizeof(num), "%d    ", line);
@@ -411,7 +412,7 @@ char *IO::editor_prompt(char *prompt, void (*callback)(char *, int))
 	buf[0] = '\0';
 	while (1)
 	{
-		RawMode::editor_set_status_message(prompt, buf);
+		RawMode::get()->editor_set_status_message(prompt, buf);
 		editor_refresh_screen();
 		int c = getch();
 		if (c == KEY_DC || c == CTRL_KEY('h') || c == BACKSPACE)
@@ -421,7 +422,7 @@ char *IO::editor_prompt(char *prompt, void (*callback)(char *, int))
 		}
 		else if (c == '\x1b')
 		{
-			RawMode::editor_set_status_message("");
+			RawMode::get()->editor_set_status_message("");
 			if (callback)
 				callback(buf, c);
 			free(buf);
@@ -431,7 +432,7 @@ char *IO::editor_prompt(char *prompt, void (*callback)(char *, int))
 		{
 			if (buflen != 0)
 			{
-				RawMode::editor_set_status_message((char *)"");
+				RawMode::get()->editor_set_status_message((char *)"");
 				if (callback)
 					callback(buf, c);
 				return buf;
